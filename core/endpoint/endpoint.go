@@ -8,14 +8,14 @@ import (
 	"github.com/mdstella/minesweeper/core/service"
 )
 
-//MakeSkeletonEndpoint - endpoint to invoke the skeleton service.
-func MakeSkeletonEndpoint(svc service.MinesweeperService) endpoint.Endpoint {
+//MakeNewGameEndpoint - endpoint to invoke for starting a new game.
+func MakeNewGameEndpoint(svc service.MinesweeperService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(model.SkeletonRequest)
-		message, err := svc.Skeleton(req.Parameter)
-		return model.SkeletonResponse{
-			Message: message,
-			Err:     err,
+		gameDefinition, err := svc.NewGame()
+		return model.NewGameResponse{
+			GameId: gameDefinition.GameId,
+			Board:  gameDefinition.Board,
+			Err:    err,
 		}, nil
 	}
 }
