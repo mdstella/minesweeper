@@ -18,3 +18,35 @@ API test
 	            "param":"this is the parameter you sent"
         }'
     ```
+3. Creating new game endpoint. We need to do the following CURL to create the new board:
+    ```
+    curl -X POST \
+        http://localhost:8080/minesweeper/v1/game \
+        -H 'Accept: */*' \
+        -H 'Content-Type: application/json' \
+        -d '{}'
+    ```
+
+    Response
+
+    ```
+       {
+           "gameId":"Q9ZnJqGwcGVJ6ZeWYPx49A",
+           "board":[
+               ["0","0","0","0","0","0","1","2","2"],
+               ["0","0","0","0","0","0","1","*","*"],
+               ["0","0","1","1","1","0","1","2","2"],
+               ["0","0","2","*","2","0","0","0","0"],
+               ["0","1","3","*","3","1","0","0","0"],
+               ["0","1","*","3","*","2","1","0","0"],
+               ["0","1","1","3","3","*","1","1","1"],
+               ["0","0","0","1","*","3","2","1","*"],
+               ["0","0","0","1","2","*","1","1","1"]
+            ]
+       }
+ 
+    ```
+
+    - It will retrieve 2 fields:
+        - **gameId**: String that will be used on the next stage to identify which game we are playing
+        - **board**: The board showing where are the bombs. This step is just for showing how the board is generated. In next stages we will keep this generated board in memory and retrieve an empty board with all the values hidden that will be the one that the Client should render.
