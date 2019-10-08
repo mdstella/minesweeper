@@ -9,9 +9,9 @@ import (
 	"github.com/mdstella/minesweeper/core/model"
 )
 
-//DecodeSkeletonRequest - decode the skeleton request to generate the model request
-func DecodeSkeletonRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request model.SkeletonRequest
+//DecodeNewGameRequest - decode the newGame request to generate the model request
+func DecodeNewGameRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request model.NewGameRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}

@@ -19,9 +19,9 @@ func main() {
 
 	srv := &service.MinesweeperSrvImpl{}
 
-	testHandler := httptransport.NewServer(endpoint.MakeSkeletonEndpoint(srv), decoder.DecodeSkeletonRequest, EncodeResponse)
+	newGameHandler := httptransport.NewServer(endpoint.MakeNewGameEndpoint(srv), decoder.DecodeNewGameRequest, EncodeResponse)
 
-	http.Handle("/skeleton", testHandler)
+	http.Handle("/minesweeper/v1/game", newGameHandler)
 
 	logger.Log("msg", "HTTP", "addr", ":8080")
 	logger.Log("err", http.ListenAndServe(":8080", nil))
