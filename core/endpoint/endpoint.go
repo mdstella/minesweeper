@@ -19,3 +19,18 @@ func MakeNewGameEndpoint(svc service.MinesweeperService) endpoint.Endpoint {
 		}, nil
 	}
 }
+
+//MakePickCellEndpoint - endpoint to invoke for starting a new game.
+func MakePickCellEndpoint(svc service.MinesweeperService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.PickCellRequest)
+		gameDefinition, err := svc.PickCell(req.GameId, req.Row, req.Column)
+		return model.PickCellResponse{
+			GameId:    gameDefinition.GameId,
+			Board:     gameDefinition.Board,
+			Won:       gameDefinition.Won,
+			EndedGame: gameDefinition.EndedGame,
+			Err:       err,
+		}, nil
+	}
+}

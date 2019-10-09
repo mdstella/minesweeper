@@ -1,11 +1,16 @@
 package service
 
 import (
-	"errors"
+	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 
+	"github.com/mdstella/minesweeper/core/errors"
+
+	"github.com/golang/groupcache/lru"
 	"github.com/lithammer/shortuuid"
 
 	"github.com/mdstella/minesweeper/core/model"
@@ -25,46 +30,70 @@ const (
 //go:generate mockery -name=MinesweeperService
 type MinesweeperService interface {
 
-	// Test is a initial testing method
+	// NewGame is for starting a new game creating the board
 	NewGame() (model.GameDefintion, error)
+
+	// PickCell allows the user to pick a cell on a given game/board
+	PickCell(gameId string, row, column int) (model.GameDefintion, error)
 }
 
 type MinesweeperSrvImpl struct {
-	// TODO add config here
+	// For this first stage will keep the boards on memory, in this map we will have the gameId as a key and the Board struct as value
+	// This map will be acces with a mutex to be sure we are not modifying it at the same time by different requests.
+	games *lru.Cache
+	mutex *sync.RWMutex
 }
 
-// Test is a initial testing method
+func NewMinesweeperService() MinesweeperService {
+	return &MinesweeperSrvImpl{
+		// initialize the LRU in 10, to avoid storing to much information in memory, will allow 10 games at the same time
+		games: lru.New(10),
+		mutex: &sync.RWMutex{},
+	}
+}
+
+////////NEW GAME///////////
+
+// NewGame is for starting a new game creating the board
 func (msi *MinesweeperSrvImpl) NewGame() (model.GameDefintion, error) {
 	board, err := msi.generateBoard(ROWS, COLS, MINES_COUNT)
 	if err != nil {
 		return model.GameDefintion{}, err
 	}
+
+	gameId := shortuuid.New()
+	msi.mutex.Lock()
+	msi.games.Add(gameId, board)
+	msi.mutex.Unlock()
+
 	return model.GameDefintion{
-		GameId: shortuuid.New(),
-		Board:  board,
+		GameId: gameId,
+		Board:  board.UserBoard,
 	}, nil
 }
 
 // generateBoard - will generate a board with the configuration sent by parameter (rows, columns and mines)
 // this method starts with lower case as it's not exposed and it can't be invoked outside the service layer.
-func (msi *MinesweeperSrvImpl) generateBoard(rows, cols, mines int) ([][]string, error) {
+func (msi *MinesweeperSrvImpl) generateBoard(rows, cols, mines int) (model.Board, error) {
 
 	if rows == 0 || cols == 0 || rows*cols < mines {
-		return nil, errors.New("Wrong configuration for the game, review the amount of rows, columns and mines")
+		return model.Board{}, errors.NewBadParamError("Wrong configuration for the game, review the amount of rows, columns and mines")
 	}
 
-	board := make([][]string, rows)
+	gameBoard := make([][]string, rows)
+	userBoard := make([][]string, rows)
 
 	// first stage of board generation, empty board with
 	for i := 0; i < rows; i++ {
-		board[i] = make([]string, cols)
+		gameBoard[i] = make([]string, cols)
+		userBoard[i] = make([]string, cols)
 	}
 
 	// Adding random mines on the board
 	for i := 0; i < mines; i++ {
 		row, column := msi.getRandomCell(rows, cols)
-		if board[row][column] != "*" {
-			board[row][column] = "*"
+		if gameBoard[row][column] != "*" {
+			gameBoard[row][column] = "*"
 		} else {
 			// decrement the index to avoid obtaining duplicated random cell
 			// with this will be requested again
@@ -78,12 +107,18 @@ func (msi *MinesweeperSrvImpl) generateBoard(rows, cols, mines int) ([][]string,
 		for j := 0; j < cols; j++ {
 			// if the cell doesn't contains a mine we will calculate the amount of mines it has
 			// in closer cells
-			if board[i][j] != "*" {
-				board[i][j] = strconv.Itoa(msi.calculateCloseMines(board, i, j))
+			if gameBoard[i][j] != "*" {
+				gameBoard[i][j] = strconv.Itoa(msi.calculateCloseMines(gameBoard, i, j))
 			}
 		}
 	}
 
+	board := model.Board{
+		GameBoard: gameBoard,
+		UserBoard: userBoard,
+	}
+
+	fmt.Println(board)
 	return board, nil
 }
 
@@ -128,4 +163,64 @@ func (msi *MinesweeperSrvImpl) hasMine(board [][]string, row, column int) int {
 		}
 	}
 	return 0
+}
+
+/////////PICK A CELL////////////////
+
+// PickCell allows the user to pick a cell on a given game/board
+func (msi *MinesweeperSrvImpl) PickCell(gameId string, row, column int) (model.GameDefintion, error) {
+	gameId = strings.TrimSpace(gameId)
+	if gameId == "" {
+		return model.GameDefintion{}, errors.NewBadParamError("GameId is empty")
+	}
+
+	if row < 0 || row >= ROWS {
+		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Wrong row value should be between 0 and %d", ROWS))
+	}
+
+	if column < 0 || column >= COLS {
+		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Wrong column value should be between 0 and %d", COLS))
+	}
+
+	msi.mutex.RLock()
+	boardIntf, ok := msi.games.Get(gameId)
+	if !ok {
+		msi.mutex.RUnlock()
+		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Error trying to obtain game by id %s. Please start a new game", gameId))
+	}
+	msi.mutex.RUnlock()
+	board := boardIntf.(model.Board)
+
+	cellItem := board.GameBoard[row][column]
+	board.UserBoard[row][column] = cellItem
+
+	// if we found a mine we notify the game ended and remove from the cache the game
+	if cellItem == "*" {
+		// remove from the cache
+		msi.mutex.Lock()
+		msi.games.Remove(gameId)
+		msi.mutex.Unlock()
+
+		return model.GameDefintion{
+			Board:     board.UserBoard,
+			EndedGame: true,
+			Won:       false,
+			GameId:    gameId,
+		}, nil
+	}
+
+	// if it's not a mine we update the cache and retrieve the new board to the client
+	// TODO --> adding flag and notify when the user wins
+	msi.mutex.Lock()
+	msi.games.Add(gameId, board)
+	msi.mutex.Unlock()
+
+	fmt.Println(board)
+
+	return model.GameDefintion{
+		Board:     board.UserBoard,
+		EndedGame: false,
+		Won:       false,
+		GameId:    gameId,
+	}, nil
 }

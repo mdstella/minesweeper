@@ -18,7 +18,7 @@ API test
 	            "param":"this is the parameter you sent"
         }'
     ```
-3. Creating new game endpoint. We need to do the following CURL to create the new board:
+3. Creating new game endpoint (**COMMIT: 6003e20863c2ec5ed195e78a5448a0249efde145**). We need to do the following CURL to create the new board:
     ```
     curl -X POST \
         http://localhost:8080/minesweeper/v1/game \
@@ -50,3 +50,66 @@ API test
     - It will retrieve 2 fields:
         - **gameId**: String that will be used on the next stage to identify which game we are playing
         - **board**: The board showing where are the bombs. This step is just for showing how the board is generated. In next stages we will keep this generated board in memory and retrieve an empty board with all the values hidden that will be the one that the Client should render.
+4. Creating endpoint to pick and reveal a cell. 
+    - Adding **gorilla/mux** library to be able to route and dispatch the endpoints with the ability to extracts parameters from the URL path. 
+    - Adding memory cache LRU to store the games in memory to be able to play N different games at the same time (hardcoded as 10). In the cache we are keeping 2 boards by game. One has the complete solution of the game, the other has the same solution that the user is seeing.
+    - Adding error handling (so far only HTTP status code 400 and 500)
+    - To play the game using the API:
+        1. Create a new game (The response is different than the previous point, now we hidden all the values from the board)
+            REQUEST
+            ```
+            curl -X POST \
+                http://localhost:8080/minesweeper/v1/game \
+                -H 'Accept: */*' \
+                -H 'Content-Type: application/json' \
+                -d '{}'
+            ```
+            RESPONSE
+            ```
+            {
+                "gameId": "zF8JeVqn3tj4Q3KBYP2SMR",
+                "board": [
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ],
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ], 
+                    [ "", "", "", "", "", "", "", "", "" ]
+                ]
+            }
+            ```
+        2. Invoke the endpoint to pick the cell
+            REQUEST
+            ```
+            curl -X POST \
+                http://localhost:8080/minesweeper/v1/game/7cQCqeZV4Q28BMvfdrfXW9 \
+                -H 'Accept: */*' \
+                -H 'Content-Type: application/json' \
+                -d '{
+	                "row":1,
+	                "column": 1
+                }'    
+            ```
+            RESPONSE (will retrieve the board with the cell revealed)
+            ```
+            {
+                "gameId":"S3aCwJwdNGiKEVFeuhufbj",
+                "endedGame":true,
+                "won":false,
+                "board":[
+                    ["","","","","","","","",""],
+                    ["","*","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""],
+                    ["","","","","","","","",""]
+                ]
+            }
+            ```
+    
