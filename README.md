@@ -112,12 +112,12 @@ API test
                 ]
             }
             ```
-5. Hosting the backend on Heroku. The host is: **https://morning-basin-97570.herokuapp.com**. Now the API is on the web, you can use it by runninng the following CURL's    
+5. Hosting the backend on the web. The host will be sent by email. Now the API is on the web, you can use it by runninng the following CURL's    
     1. Start a new game
         REQUEST
         ```
         curl -X POST \
-            https://morning-basin-97570.herokuapp.com/minesweeper/v1/game \
+            {{host}}/minesweeper/v1/game \
             -H 'Accept: */*' \
             -H 'Content-Type: application/json' \
             -d '{}'
@@ -143,7 +143,7 @@ API test
         REQUEST
         ```
         curl -X POST \
-            https://morning-basin-97570.herokuapp.com/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
+            {{host}}/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
             -H 'Accept: */*' \
             -H 'Content-Type: application/json' \
             -d '{
