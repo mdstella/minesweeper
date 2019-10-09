@@ -85,7 +85,7 @@ API test
             REQUEST
             ```
             curl -X POST \
-                http://localhost:8080/minesweeper/v1/game/7cQCqeZV4Q28BMvfdrfXW9 \
+                http://localhost:8080/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
                 -H 'Accept: */*' \
                 -H 'Content-Type: application/json' \
                 -d '{
@@ -96,7 +96,7 @@ API test
             RESPONSE (will retrieve the board with the cell revealed)
             ```
             {
-                "gameId":"S3aCwJwdNGiKEVFeuhufbj",
+                "gameId":"zF8JeVqn3tj4Q3KBYP2SMR",
                 "endedGame":true,
                 "won":false,
                 "board":[
@@ -112,4 +112,61 @@ API test
                 ]
             }
             ```
-    
+5. Hosting the backend on Heroku. The host is: **https://morning-basin-97570.herokuapp.com**. Now the API is on the web, you can use it by runninng the following CURL's    
+    1. Start a new game
+        REQUEST
+        ```
+        curl -X POST \
+            https://morning-basin-97570.herokuapp.com/minesweeper/v1/game \
+            -H 'Accept: */*' \
+            -H 'Content-Type: application/json' \
+            -d '{}'
+        ```
+        RESPONSE
+        ```
+        {
+            "gameId": "zF8JeVqn3tj4Q3KBYP2SMR",
+            "board": [
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ],
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ]
+            ]
+        }
+        ```
+    2. Invoke the endpoint to pick the cell
+        REQUEST
+        ```
+        curl -X POST \
+            https://morning-basin-97570.herokuapp.com/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
+            -H 'Accept: */*' \
+            -H 'Content-Type: application/json' \
+            -d '{
+                "row":1,
+                "column": 1
+            }'    
+        ```
+        RESPONSE (will retrieve the board with the cell revealed)
+        ```
+        {
+            "gameId":"zF8JeVqn3tj4Q3KBYP2SMR",
+            "endedGame":true,
+            "won":false,
+            "board":[
+                ["","2","1","0","","","","",""],
+                ["","*","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""]
+            ]
+        }
+        ```
