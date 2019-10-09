@@ -81,7 +81,7 @@ API test
                 ]
             }
             ```
-        2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
+        2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path. Consider that is a 9X9 board, and the allowed indexes values are from 0 to 8.
             REQUEST
             ```
             curl -X POST \
@@ -139,7 +139,7 @@ API test
             ]
         }
         ```
-    2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
+    2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path. Consider that is a 9X9 board, and the allowed indexes values are from 0 to 8
         REQUEST
         ```
         curl -X POST \
