@@ -112,7 +112,7 @@ API test
                 ]
             }
             ```
-5. Hosting the backend on the web. The host will be sent by email. Now the API is on the web, you can use it by runninng the following CURL's    
+5. Hosting the backend on the web (**COMMIT: deec7737b26a33a02a50d71c4c6e46adc08f1fc6**). The host will be sent by email. Now the API is on the web, you can use it by runninng the following CURL's    
     1. Start a new game
         REQUEST
         ```
