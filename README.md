@@ -50,7 +50,7 @@ API test
     - It will retrieve 2 fields:
         - **gameId**: String that will be used on the next stage to identify which game we are playing
         - **board**: The board showing where are the bombs. This step is just for showing how the board is generated. In next stages we will keep this generated board in memory and retrieve an empty board with all the values hidden that will be the one that the Client should render.
-4. Creating endpoint to pick and reveal a cell. 
+4. Creating endpoint to pick and reveal a cell (**COMMIT: fc8b37b**). 
     - Adding **gorilla/mux** library to be able to route and dispatch the endpoints with the ability to extracts parameters from the URL path. 
     - Adding memory cache LRU to store the games in memory to be able to play N different games at the same time (hardcoded as 10). In the cache we are keeping 2 boards by game. One has the complete solution of the game, the other has the same solution that the user is seeing.
     - Adding error handling (so far only HTTP status code 400 and 500)

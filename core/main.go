@@ -19,6 +19,16 @@ import (
 
 func main() {
 	logger := log.NewLogfmtLogger(os.Stderr)
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		logger.Log("$PORT must be set")
+		port = ":8000"
+	}
+
+	if !strings.HasPrefix(port, ":") {
+		port = ":" + port
+	}
 
 	srv := service.NewMinesweeperService()
 	r := mux.NewRouter()
@@ -33,8 +43,8 @@ func main() {
 	pickCellHandler := httptransport.NewServer(endpoint.MakePickCellEndpoint(srv), decoder.DecodePickCellRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/game/{gameId}").Handler(pickCellHandler)
 
-	logger.Log("msg", "HTTP", "addr", ":8080")
-	logger.Log("err", http.ListenAndServe(":8080", r))
+	logger.Log("msg", "HTTP", "addr", port)
+	logger.Log("err", http.ListenAndServe(port, r))
 
 }
 
