@@ -81,7 +81,7 @@ API test
                 ]
             }
             ```
-        2. Invoke the endpoint to pick the cell
+        2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
             REQUEST
             ```
             curl -X POST \
@@ -139,7 +139,7 @@ API test
             ]
         }
         ```
-    2. Invoke the endpoint to pick the cell
+    2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
         REQUEST
         ```
         curl -X POST \
