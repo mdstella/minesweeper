@@ -50,7 +50,7 @@ API test
     - It will retrieve 2 fields:
         - **gameId**: String that will be used on the next stage to identify which game we are playing
         - **board**: The board showing where are the bombs. This step is just for showing how the board is generated. In next stages we will keep this generated board in memory and retrieve an empty board with all the values hidden that will be the one that the Client should render.
-4. Creating endpoint to pick and reveal a cell. 
+4. Creating endpoint to pick and reveal a cell (**COMMIT: fc8b37b**). 
     - Adding **gorilla/mux** library to be able to route and dispatch the endpoints with the ability to extracts parameters from the URL path. 
     - Adding memory cache LRU to store the games in memory to be able to play N different games at the same time (hardcoded as 10). In the cache we are keeping 2 boards by game. One has the complete solution of the game, the other has the same solution that the user is seeing.
     - Adding error handling (so far only HTTP status code 400 and 500)
@@ -81,11 +81,11 @@ API test
                 ]
             }
             ```
-        2. Invoke the endpoint to pick the cell
+        2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
             REQUEST
             ```
             curl -X POST \
-                http://localhost:8080/minesweeper/v1/game/7cQCqeZV4Q28BMvfdrfXW9 \
+                http://localhost:8080/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
                 -H 'Accept: */*' \
                 -H 'Content-Type: application/json' \
                 -d '{
@@ -96,7 +96,7 @@ API test
             RESPONSE (will retrieve the board with the cell revealed)
             ```
             {
-                "gameId":"S3aCwJwdNGiKEVFeuhufbj",
+                "gameId":"zF8JeVqn3tj4Q3KBYP2SMR",
                 "endedGame":true,
                 "won":false,
                 "board":[
@@ -112,4 +112,61 @@ API test
                 ]
             }
             ```
-    
+5. Hosting the backend on the web. The host will be sent by email. Now the API is on the web, you can use it by runninng the following CURL's    
+    1. Start a new game
+        REQUEST
+        ```
+        curl -X POST \
+            {{host}}/minesweeper/v1/game \
+            -H 'Accept: */*' \
+            -H 'Content-Type: application/json' \
+            -d '{}'
+        ```
+        RESPONSE
+        ```
+        {
+            "gameId": "zF8JeVqn3tj4Q3KBYP2SMR",
+            "board": [
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ],
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ], 
+                [ "", "", "", "", "", "", "", "", "" ]
+            ]
+        }
+        ```
+    2. Invoke the endpoint to pick the cell. For this you have to add the gameId obtained when creating the new game into the path.
+        REQUEST
+        ```
+        curl -X POST \
+            {{host}}/minesweeper/v1/game/zF8JeVqn3tj4Q3KBYP2SMR \
+            -H 'Accept: */*' \
+            -H 'Content-Type: application/json' \
+            -d '{
+                "row":1,
+                "column": 1
+            }'    
+        ```
+        RESPONSE (will retrieve the board with the cell revealed)
+        ```
+        {
+            "gameId":"zF8JeVqn3tj4Q3KBYP2SMR",
+            "endedGame":true,
+            "won":false,
+            "board":[
+                ["","2","1","0","","","","",""],
+                ["","*","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""],
+                ["","","","","","","","",""]
+            ]
+        }
+        ```
