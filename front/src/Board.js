@@ -9,12 +9,18 @@ class Board extends Component {
 
     componentDidMount() {
         this.setState({
-            board: this.props.gameBoard,
+            board: this.props.board
         });
     }
 
     cellPickedCallback = (cellPicked) => {
-        this.setState({ board: cellPicked.board })
+        if (cellPicked.error !== undefined) {
+            alert("GAME OVER, PLAY AGAIN?")
+            this.setState({ board: [] })
+            this.props.appCallback()
+        } else {
+            this.setState({ board: cellPicked.board })
+        }
     }
 
     render() {
@@ -36,6 +42,8 @@ class Board extends Component {
                     </table>
                 </div >
             );
+        } else {
+            return null
         }
     }
 }

@@ -13,6 +13,17 @@ class Row extends Component {
         });
     }
 
+    // this will update the state if there are new props on the component
+    static getDerivedStateFromProps(props, state) {
+        if (props.columns !== state.columns) {
+            return {
+                columns: props.columns
+            };
+        }
+        // Return null to indicate no change to state.
+        return null;
+    }
+
     render() {
         let gameId = this.props.gameId
         let rowId = this.props.rowId
