@@ -12,6 +12,17 @@ class Cell extends Component {
         });
     }
 
+    // this will update the state if there are new props on the component
+    static getDerivedStateFromProps(props, state) {
+        if (props.value !== state.value) {
+            return {
+                value: props.value
+            };
+        }
+        // Return null to indicate no change to state.
+        return null;
+    }
+
     pickCell = () => {
         fetch("http://localhost:5000/minesweeper/v1/game/" + this.props.gameId, {
             method: 'post',
@@ -39,6 +50,8 @@ class Cell extends Component {
         let color = "white"
         if (this.state.value === "") {
             color = "grey"
+        } else if (this.state.value === "*") {
+            color = "red"
         }
         return (
             <td onClick={this.pickCell} bgcolor={color} height="20px" width="20px" align="center" id={this.props.colId}> {this.state.value} </td>

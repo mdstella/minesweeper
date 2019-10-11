@@ -17,11 +17,19 @@ class App extends Component {
         return resp.json()
       })
       .then((data) => {
+        this.clearBoard()
         this.setState({ gameBoard: data.board, gameId: data.gameId })
       })
       .catch((error) => {
         console.log(error, "catch the hoop")
       })
+  }
+
+  clearBoard = () => {
+    this.setState({
+      gameBoard: [],
+      gameId: ''
+    })
   }
 
   render() {
@@ -40,7 +48,7 @@ class App extends Component {
       }
     }
 
-
+    let callback = this.clearBoard.bind(this)
 
     return (
       <div>
@@ -53,7 +61,7 @@ class App extends Component {
 
 
         {gameBoard.length > 0 && gameId !== '' &&
-          <Board gameBoard={gameBoard} gameId={gameId} />
+          <Board appCallback={callback} board={gameBoard} gameId={gameId} />
         }
       </div >
     );
