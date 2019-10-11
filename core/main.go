@@ -14,6 +14,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/rs/cors"
 	"golang.org/x/net/context"
 )
 
@@ -43,8 +44,10 @@ func main() {
 	pickCellHandler := httptransport.NewServer(endpoint.MakePickCellEndpoint(srv), decoder.DecodePickCellRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/game/{gameId}").Handler(pickCellHandler)
 
+	handler := cors.Default().Handler(r)
+
 	logger.Log("msg", "HTTP", "addr", port)
-	logger.Log("err", http.ListenAndServe(port, r))
+	logger.Log("err", http.ListenAndServe(port, handler))
 
 }
 
