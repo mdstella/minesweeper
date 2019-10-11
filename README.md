@@ -9,7 +9,8 @@
 **NOTE1:** There are some front end screenshots on this PR: https://github.com/mdstella/minesweeper/pull/18 (FE not hosted yet, explanation on item 6)
 
 **NOTE2:** after having both front and back on a web version will start adding test cases
-1. Breakdown and task creation for the complete project
+
+1. Breakdown and task creation for the complete project (see Issues tab on repo and closed issues to have a complete understanding of the break down)
     - Created githb issues from T1 to T12 based on the priority (this might change during the development process, but at least will provide some guide)
     - Also as a branching strategy will create, if possible, 1 branch from master for each issue under the name T{X}. In a regular process should go under code reviwe before merging it into master, here I will merge it as soon as I have some working code to show progress
 2. Doing T1 issue on github tasks definition. Adding the main structure of the BE. Creating a test skeleton POST endpoint, adding service layer (with support for generating mocks - important for generating test cases). **COMMIT: 2711ebe0ad7c0c527051dcbea47d03aa7addadad**
