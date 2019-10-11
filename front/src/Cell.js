@@ -27,7 +27,7 @@ class Cell extends Component {
     // the board. In the future maybe the cell could be the only thing we re render, but now we are getting the 
     // complete board from the API
     pickCell = () => {
-        fetch("http://localhost:5000/minesweeper/v1/game/" + this.props.gameId, {
+        fetch("http://localhost:8000/minesweeper/v1/game/" + this.props.gameId, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
