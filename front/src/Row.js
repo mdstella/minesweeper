@@ -30,6 +30,7 @@ class Row extends Component {
         let callback = this.props.boardCallback
 
         if (gameId !== '') {
+            // Iterates all the columns and with the value it will render each Cell
             let cells = this.state.columns.map(function (cellVal, colId) {
                 return (
                     <Cell boardCallback={callback} key={colId} colId={colId} rowId={rowId} value={cellVal} gameId={gameId} />
