@@ -1,13 +1,14 @@
 # minesweeper-API
-API test
 
 ## Versions
     - Go 1.12.10
     - Node: 8.9.4
     - npm: 5.6.0
-    
+       
 ## Changelog/decisions 
-**NOTE:** after having both front and back on a web version will start adding test cases
+**NOTE1:** There are some front end screenshots on this PR: https://github.com/mdstella/minesweeper/pull/18
+
+**NOTE2:** after having both front and back on a web version will start adding test cases
 1. Breakdown and task creation for the complete project
     - Created githb issues from T1 to T12 based on the priority (this might change during the development process, but at least will provide some guide)
     - Also as a branching strategy will create, if possible, 1 branch from master for each issue under the name T{X}. In a regular process should go under code reviwe before merging it into master, here I will merge it as soon as I have some working code to show progress
