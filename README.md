@@ -6,7 +6,7 @@
     - npm: 5.6.0
        
 ## Changelog/decisions 
-**NOTE1:** There are some front end screenshots on this PR: https://github.com/mdstella/minesweeper/pull/18
+**NOTE1:** There are some front end screenshots on this PR: https://github.com/mdstella/minesweeper/pull/18 (FE not hosted yet, explanation on item 6)
 
 **NOTE2:** after having both front and back on a web version will start adding test cases
 1. Breakdown and task creation for the complete project
