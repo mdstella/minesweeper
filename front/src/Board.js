@@ -13,6 +13,9 @@ class Board extends Component {
         });
     }
 
+    // this is callback that will be invoked when a cell is picked by the user. It will be invoked after
+    // calling the /game/{gameId} endpoint in the BE, and will override the properties with the new board to
+    // re render it
     cellPickedCallback = (cellPicked) => {
         if (cellPicked.error !== undefined) {
             alert("GAME OVER, PLAY AGAIN?")
@@ -28,6 +31,7 @@ class Board extends Component {
         let callback = this.cellPickedCallback.bind(this)
 
         if (this.state.board !== [] && gameId !== '') {
+            // iterates the rows and return the Row component that will render each row
             let rows = this.state.board.map(function (columns, i) {
                 return (
                     <Row boardCallback={callback} key={i} rowId={i} columns={columns} gameId={gameId} />

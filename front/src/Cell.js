@@ -23,6 +23,9 @@ class Cell extends Component {
         return null;
     }
 
+    // invokes the API /game/{gameId} when a cell is clicked. With the response it will re render
+    // the board. In the future maybe the cell could be the only thing we re render, but now we are getting the 
+    // complete board from the API
     pickCell = () => {
         fetch("http://localhost:5000/minesweeper/v1/game/" + this.props.gameId, {
             method: 'post',
@@ -39,6 +42,7 @@ class Cell extends Component {
                 return resp.json()
             })
             .then((data) => {
+                // invoking the board callback to update the board status and re render
                 this.props.boardCallback(data)
             })
             .catch((error) => {

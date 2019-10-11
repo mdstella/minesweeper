@@ -4,6 +4,8 @@ import Board from './Board'
 
 
 class App extends Component {
+  // this functions is invoked when the user clicks on the "NEW GAME" button
+  // we invoke the endpoint /game to obtain a new board an gameId
   newGame = () => {
     fetch("http://localhost:5000/minesweeper/v1/game", {
       method: 'post',
@@ -17,6 +19,8 @@ class App extends Component {
         return resp.json()
       })
       .then((data) => {
+        // the API response. First we clear the board (in case is not a the first game, to remove the old board), then we set the state
+        // of the App component with the board and gameId
         this.clearBoard()
         this.setState({ gameBoard: data.board, gameId: data.gameId })
       })
@@ -25,6 +29,7 @@ class App extends Component {
       })
   }
 
+  // this clears the board (set the initial state of App component, empty board and gameId)
   clearBoard = () => {
     this.setState({
       gameBoard: [],
