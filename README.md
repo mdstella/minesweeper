@@ -171,3 +171,16 @@ API test
             ]
         }
         ```
+6. Development of a React application that invokes the core API to render the game and allows the user to play it.
+    - So far is only available locally. 
+    - The game was splited on 4 different components:
+        - App -> it renders the NEW GAME button and the Board component
+        - Board -> it iterates the rows from the board rendering each Row component
+        - Row -> it iterates every column in the row rendering each Cell component
+        - Cell -> shows the value of each cell
+    - Node: 8.9.4, npm: 5.6.0
+    - To run it run `npm install` under **front** folder. Then run `npm start`
+    - Change the localhost pointing to the hosted core API, or start also the API locally. To do this follow the following steps:
+        - Use Golang 1.12.10
+        - Under core folder run `go buil`
+        - Run `go run main.go` and server should start

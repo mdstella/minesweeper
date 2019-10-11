@@ -7,7 +7,7 @@ class App extends Component {
   // this functions is invoked when the user clicks on the "NEW GAME" button
   // we invoke the endpoint /game to obtain a new board an gameId
   newGame = () => {
-    fetch("http://localhost:5000/minesweeper/v1/game", {
+    fetch("http://localhost:8000/minesweeper/v1/game", {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
