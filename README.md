@@ -1,6 +1,11 @@
 # minesweeper-API
 API test
 
+## Versions
+    - Go 1.12.10
+    - Node: 8.9.4
+    - npm: 5.6.0
+    
 ## Changelog/decisions 
 **NOTE:** after having both front and back on a web version will start adding test cases
 1. Breakdown and task creation for the complete project
@@ -171,7 +176,7 @@ API test
             ]
         }
         ```
-6. Development of a React application that invokes the core API to render the game and allows the user to play it.
+6. Development of a React application that invokes the core API to render the game and allows the user to play it (**LAST COMMIT: aac0dfef182e2e9c0302396ab1f29f7d6e4af5ce**).
     - So far is only available locally. 
     - The game was splited on 4 different components:
         - App -> it renders the NEW GAME button and the Board component
