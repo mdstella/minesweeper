@@ -21,6 +21,10 @@ class Board extends Component {
             alert("GAME OVER, PLAY AGAIN?")
             this.setState({ board: [] })
             this.props.appCallback()
+        } else if (cellPicked.endedGame && cellPicked.won) {
+            alert("CONGRATS!!! YOU WON!!! PLAY AGAIN?")
+            this.setState({ board: [] })
+            this.props.appCallback()
         } else {
             this.setState({ board: cellPicked.board })
         }
