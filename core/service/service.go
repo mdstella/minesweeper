@@ -21,6 +21,9 @@ const (
 	ROWS        = 9
 	COLS        = 9
 	MINES_COUNT = 10
+	// hardcoded from now, if the user revealed 71 cells means he wins
+	// as the board has 81 cells and 10 have mines
+	MAX_REVEAL_CELL_COUNT = 71
 
 	// Mine representation in the board
 	MINE = "*"
@@ -114,8 +117,9 @@ func (msi *MinesweeperSrvImpl) generateBoard(rows, cols, mines int) (model.Board
 	}
 
 	board := model.Board{
-		GameBoard: gameBoard,
-		UserBoard: userBoard,
+		GameBoard:   gameBoard,
+		UserBoard:   userBoard,
+		RevealCount: 0,
 	}
 
 	fmt.Println(board)
@@ -192,7 +196,6 @@ func (msi *MinesweeperSrvImpl) PickCell(gameId string, row, column int) (model.G
 	board := boardIntf.(model.Board)
 
 	cellItem := board.GameBoard[row][column]
-	board.UserBoard[row][column] = cellItem
 
 	// if we found a mine we notify the game ended and remove from the cache the game
 	if cellItem == "*" {
@@ -201,10 +204,34 @@ func (msi *MinesweeperSrvImpl) PickCell(gameId string, row, column int) (model.G
 		msi.games.Remove(gameId)
 		msi.mutex.Unlock()
 
+		// reveal the mine
+		board.UserBoard[row][column] = cellItem
 		return model.GameDefintion{
 			Board:     board.UserBoard,
 			EndedGame: true,
 			Won:       false,
+			GameId:    gameId,
+		}, nil
+	}
+
+	if cellItem == "0" {
+		board.RevealCount += msi.revealCloseCells(&board, row, column, 0)
+	} else {
+		// reveal the cell and increment the reaveal cell counter of the board
+		board.UserBoard[row][column] = cellItem
+		board.RevealCount += 1
+	}
+
+	if board.RevealCount == MAX_REVEAL_CELL_COUNT {
+		// remove from the cache
+		msi.mutex.Lock()
+		msi.games.Remove(gameId)
+		msi.mutex.Unlock()
+
+		return model.GameDefintion{
+			Board:     board.UserBoard,
+			EndedGame: true,
+			Won:       true,
 			GameId:    gameId,
 		}, nil
 	}
@@ -223,4 +250,44 @@ func (msi *MinesweeperSrvImpl) PickCell(gameId string, row, column int) (model.G
 		Won:       false,
 		GameId:    gameId,
 	}, nil
+}
+
+// revealCloseCells will reveal the cells that are empty in a recursive way
+func (msi *MinesweeperSrvImpl) revealCloseCells(board *model.Board, row, column, level int) int {
+	// If we are out of range or the cell is not 0 we stop the recursion
+	if row < 0 || row >= len(board.GameBoard) || column < 0 ||
+		column >= len(board.GameBoard[row]) ||
+		board.UserBoard[row][column] != "" && level > 0 {
+		// return 0 as no cell is revealed
+		return 0
+	}
+
+	// 2nd recurtion stopper, we found an item next to an empty cell, we reveal it an stop the recursion
+	if board.GameBoard[row][column] != "0" {
+		board.UserBoard[row][column] = board.GameBoard[row][column]
+		// return 1 as the non empty cell was revealed also
+		return 1
+	}
+
+	// reveal the cell and increment the counter to mark as revealed cell count
+	board.UserBoard[row][column] = board.GameBoard[row][column]
+	count := 1
+	// reveal upper left
+	count += msi.revealCloseCells(board, row-1, column-1, level+1)
+	// reveal upper
+	count += msi.revealCloseCells(board, row-1, column, level+1)
+	// reveal upper right
+	count += msi.revealCloseCells(board, row-1, column+1, level+1)
+	// reveal left
+	count += msi.revealCloseCells(board, row, column-1, level+1)
+	// reveal right
+	count += msi.revealCloseCells(board, row, column+1, level+1)
+	// reveal lower left
+	count += msi.revealCloseCells(board, row+1, column-1, level+1)
+	// reveal lower
+	count += msi.revealCloseCells(board, row+1, column, level+1)
+	// reveal lower right
+	count += msi.revealCloseCells(board, row+1, column+1, level+1)
+
+	return count
 }

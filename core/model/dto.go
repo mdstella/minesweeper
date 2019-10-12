@@ -13,8 +13,9 @@ type GameDefintion struct {
 // This struct represent the board game, it has two different multidimensional arrays. The UserBoard will be used to retrieve to the client, will
 // have the cells with it's values hidden. The GameBoard will be store in the server side and will be used to reveal the client picks
 type Board struct {
-	UserBoard [][]string
-	GameBoard [][]string
+	UserBoard   [][]string
+	GameBoard   [][]string
+	RevealCount int
 }
 
 // adding the stringer implementation for debuggin purpose
