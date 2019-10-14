@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -38,6 +37,9 @@ type MinesweeperService interface {
 
 	// PickCell allows the user to pick a cell on a given game/board
 	PickCell(gameId string, row, column int) (model.GameDefintion, error)
+
+	// AddFlag allows the user to add a flag to a cell on a given game/board
+	AddFlag(gameId string, row, column int) (model.GameDefintion, error)
 }
 
 type MinesweeperSrvImpl struct {
@@ -173,27 +175,17 @@ func (msi *MinesweeperSrvImpl) hasMine(board [][]string, row, column int) int {
 
 // PickCell allows the user to pick a cell on a given game/board
 func (msi *MinesweeperSrvImpl) PickCell(gameId string, row, column int) (model.GameDefintion, error) {
-	gameId = strings.TrimSpace(gameId)
-	if gameId == "" {
-		return model.GameDefintion{}, errors.NewBadParamError("GameId is empty")
+	err := msi.validateInputs(gameId, row, column)
+
+	if err != nil {
+		return model.GameDefintion{}, err
 	}
 
-	if row < 0 || row >= ROWS {
-		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Wrong row value should be between 0 and %d", ROWS))
-	}
+	board, err := msi.getBoardFromLru(gameId)
 
-	if column < 0 || column >= COLS {
-		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Wrong column value should be between 0 and %d", COLS))
+	if err != nil {
+		return model.GameDefintion{}, err
 	}
-
-	msi.mutex.RLock()
-	boardIntf, ok := msi.games.Get(gameId)
-	if !ok {
-		msi.mutex.RUnlock()
-		return model.GameDefintion{}, errors.NewBadParamError(fmt.Sprintf("Error trying to obtain game by id %s. Please start a new game", gameId))
-	}
-	msi.mutex.RUnlock()
-	board := boardIntf.(model.Board)
 
 	cellItem := board.GameBoard[row][column]
 
@@ -290,4 +282,43 @@ func (msi *MinesweeperSrvImpl) revealCloseCells(board *model.Board, row, column,
 	count += msi.revealCloseCells(board, row+1, column+1, level+1)
 
 	return count
+}
+
+/////////ADDING A FLAG////////////////
+func (msi *MinesweeperSrvImpl) AddFlag(gameId string, row, column int) (model.GameDefintion, error) {
+	err := msi.validateInputs(gameId, row, column)
+
+	if err != nil {
+		return model.GameDefintion{}, err
+	}
+
+	board, err := msi.getBoardFromLru(gameId)
+
+	if err != nil {
+		return model.GameDefintion{}, err
+	}
+
+	cellItem := board.UserBoard[row][column]
+
+	// if the cell is empty we add a flag (represented by question mark)
+	if cellItem == "" {
+		board.UserBoard[row][column] = "?"
+	} else if cellItem == "?" {
+		// if there was already a flag on the cell we remove it
+		board.UserBoard[row][column] = ""
+	}
+
+	// if it's not a mine we update the cache and retrieve the new board to the client
+	msi.mutex.Lock()
+	msi.games.Add(gameId, board)
+	msi.mutex.Unlock()
+
+	fmt.Println(board)
+
+	return model.GameDefintion{
+		Board:     board.UserBoard,
+		EndedGame: false,
+		Won:       false,
+		GameId:    gameId,
+	}, nil
 }

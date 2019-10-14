@@ -41,8 +41,13 @@ func main() {
 	// Define the method, path and the handler in the router to be able to dispatch requests to it.
 	r.Methods("POST").Path("/minesweeper/v1/game").Handler(newGameHandler)
 
+	// Adding routing for picking a cell
 	pickCellHandler := httptransport.NewServer(endpoint.MakePickCellEndpoint(srv), decoder.DecodePickCellRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/game/{gameId}").Handler(pickCellHandler)
+
+	// Adding routing for adding a flag
+	addFlagHandler := httptransport.NewServer(endpoint.MakeAddFlagEndpoint(srv), decoder.DecodeAddFlagRequest, EncodeResponse)
+	r.Methods("POST").Path("/minesweeper/v1/flag/{gameId}").Handler(addFlagHandler)
 
 	handler := cors.Default().Handler(r)
 
