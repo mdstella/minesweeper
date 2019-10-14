@@ -6,9 +6,7 @@
     - npm: 5.6.0
        
 ## Changelog/decisions 
-**NOTE1:** There are some front end screenshots on this PR: https://github.com/mdstella/minesweeper/pull/18 (FE not hosted yet, explanation on item 6)
-
-**NOTE2:** after having both front and back on a web version will start adding test cases
+**NOTE:** Now that FE and BE are hosted on the web will add test cases on nexts commits.
 
 1. Breakdown and task creation for the complete project (see Issues tab on repo and closed issues to have a complete understanding of the break down)
     - Created githb issues from T1 to T12 based on the priority (this might change during the development process, but at least will provide some guide)
