@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -9,7 +15,7 @@ import Row from './Row';
 class Board extends Component {
     constructor(props) {
         super(props);
-        this.state = { board: [], addFlag: false };
+        this.state = { board: [], addFlag: false, endedGame: false };
     }
 
     componentDidMount() {
@@ -18,20 +24,27 @@ class Board extends Component {
         });
     }
 
+    handleClose = () => {
+        this.setState({
+            endedGame: false
+        });
+    };
+
     // this is callback that will be invoked when a cell is picked by the user. It will be invoked after
     // calling the /game/{gameId} endpoint in the BE, and will override the properties with the new board to
     // re render it
     cellPickedCallback = (cellPicked) => {
         if (cellPicked.error !== undefined) {
-            alert("GAME OVER, PLAY AGAIN?")
             this.setState({ board: [] })
             this.props.appCallback()
-        } else if (cellPicked.endedGame && cellPicked.won) {
-            alert("CONGRATS!!! YOU WON!!! PLAY AGAIN?")
-            this.setState({ board: [] })
-            this.props.appCallback()
-        } else {
+        }
+        else {
             this.setState({ board: cellPicked.board })
+            if (cellPicked.endedGame && !cellPicked.won) {
+                this.setState({ endedGame: true, won: false, board: cellPicked.board })
+            } else if (cellPicked.endedGame && cellPicked.won) {
+                this.setState({ endedGame: true, won: true, board: cellPicked.board })
+            }
         }
     }
 
@@ -76,6 +89,28 @@ class Board extends Component {
                             {rows}
                         </tbody>
                     </table>
+
+                    <Dialog
+                        open={this.state.endedGame}
+                        onClose={this.handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"GAME OVER!!!"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                {this.state.won ? "Cograts!!! You won!!! Want to play again?" : "You lost!!!! Want to play again?"}
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleClose} color="primary">
+                                No
+          </Button>
+                            <Button onClick={this.props.newGameCallback} color="primary" autoFocus>
+                                Yes
+          </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div >
             );
         } else {

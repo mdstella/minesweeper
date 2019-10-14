@@ -54,6 +54,7 @@ class App extends Component {
     }
 
     let callback = this.clearBoard.bind(this)
+    let newGame = this.newGame.bind(this)
 
     return (
       <div>
@@ -66,7 +67,7 @@ class App extends Component {
 
 
         {gameBoard.length > 0 && gameId !== '' &&
-          <Board appCallback={callback} board={gameBoard} gameId={gameId} />
+          <Board newGameCallback={newGame} appCallback={callback} board={gameBoard} gameId={gameId} />
         }
       </div >
     );
