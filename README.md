@@ -193,3 +193,4 @@
 	- New endpoint added on the BE --> `/minesweeper/v1/flag/{gameId}`. Input and output is the same as pickCell endpoint, but it mark a cell as flagged.
 	- On the FE side added a toggle button to select if we want to reveal a cell or flag it.
 	- Added images for flags and mines.
+8. Modal game over notification added to let the user know if he/she won or lost.
