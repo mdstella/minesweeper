@@ -26,6 +26,8 @@ const (
 
 	// Mine representation in the board
 	MINE = "*"
+	// Flag representation in the board
+	FLAG = "?"
 )
 
 // MinesweeperService is a simple interface for the minesweeper business logic.
@@ -302,8 +304,8 @@ func (msi *MinesweeperSrvImpl) AddFlag(gameId string, row, column int) (model.Ga
 
 	// if the cell is empty we add a flag (represented by question mark)
 	if cellItem == "" {
-		board.UserBoard[row][column] = "?"
-	} else if cellItem == "?" {
+		board.UserBoard[row][column] = FLAG
+	} else if cellItem == FLAG {
 		// if there was already a flag on the cell we remove it
 		board.UserBoard[row][column] = ""
 	}
