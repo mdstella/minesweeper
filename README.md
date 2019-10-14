@@ -6,7 +6,6 @@
     - npm: 5.6.0
        
 ## Changelog/decisions 
-**NOTE:** Now that FE and BE are hosted on the web will add test cases on nexts commits.
 
 1. Breakdown and task creation for the complete project (see Issues tab on repo and closed issues to have a complete understanding of the break down)
     - Created githb issues from T1 to T12 based on the priority (this might change during the development process, but at least will provide some guide)
@@ -193,4 +192,5 @@
 	- New endpoint added on the BE --> `/minesweeper/v1/flag/{gameId}`. Input and output is the same as pickCell endpoint, but it mark a cell as flagged.
 	- On the FE side added a toggle button to select if we want to reveal a cell or flag it.
 	- Added images for flags and mines.
-8. Modal game over notification added to let the user know if he/she won or lost.
+8. Modal game over notification added to let the user know if he/she won or lost (**COMMIT: 4e7a5f5e34a87f72371a25aa7cfa1f46e33621e0**).
+9. Adding test cases to BE (**COMMIT 6dae4935bff0f096f5acfaaf6a2857cd8832725b**). Added integration tests, invoking using the endpoint layer and going through the service. Added unit test cases on service layer (without mocking). Added unit tests cases on Endpoint layer (mocking the service layer)
