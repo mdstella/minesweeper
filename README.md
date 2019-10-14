@@ -191,3 +191,7 @@
         - Use Golang 1.12.10
         - Under core folder run `go buil`
         - Run `go run main.go` and server should start
+7. Adding support to add flags and to clear cells that have no mines near them (**COMMITS: ebb73d6, 9f42ab6, 17e6e96**).
+	- New endpoint added on the BE --> `/minesweeper/v1/flag/{gameId}`. Input and output is the same as pickCell endpoint, but it mark a cell as flagged.
+	- On the FE side added a toggle button to select if we want to reveal a cell or flag it.
+	- Added images for flags and mines.
