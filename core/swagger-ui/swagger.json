@@ -64,7 +64,7 @@
     },
     "/game": {
       "post": {
-        "description": "Generates a new Minesweeper game",
+        "description": "Generates a new Minesweeper game. Just execute a post with to the endpoint with an empty body",
         "consumes": [
           "application/json"
         ],
