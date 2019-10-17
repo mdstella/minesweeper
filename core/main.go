@@ -113,6 +113,10 @@ func main() {
 	addFlagHandler := httptransport.NewServer(endpoint.MakeAddFlagEndpoint(srv), decoder.DecodeAddFlagRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/flag/{gameId}").Handler(addFlagHandler)
 
+	// adding swagger endpoint to have the API doc available
+	swaggerUrl := "/swagger-ui/"
+	r.PathPrefix(swaggerUrl).Handler(http.StripPrefix(swaggerUrl, http.FileServer(http.Dir("./swagger-ui/"))))
+
 	handler := cors.Default().Handler(r)
 
 	logger.Log("msg", "HTTP", "addr", port)
