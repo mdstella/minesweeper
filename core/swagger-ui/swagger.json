@@ -16,7 +16,7 @@
     "version": "0.0.1"
   },
   "host": "localhost",
-  "basePath": "/v1",
+  "basePath": "/minesweeper/v1",
   "paths": {
     "/flag/:gameId": {
       "post": {
