@@ -1,0 +1,212 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "the purpose of this application is to provide an application\nthat is using plain go code to define an API for Minesweeper game",
+    "title": "Minesweeper API.",
+    "version": "0.0.1"
+  },
+  "host": "localhost",
+  "basePath": "/v1",
+  "paths": {
+    "/flag/:gameId": {
+      "post": {
+        "description": "Add a flag to a cell",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "minesweeper"
+        ],
+        "operationId": "AddFlagRequest",
+        "parameters": [
+          {
+            "name": "Cell",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Cell"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "GameId",
+            "description": "The game id",
+            "name": "gameId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PickCellResponse"
+          },
+          "default": {
+            "$ref": "#/responses/PickCellResponse"
+          }
+        }
+      }
+    },
+    "/game": {
+      "post": {
+        "description": "Generates a new Minesweeper game. Just execute a post with to the endpoint with an empty body",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "minesweeper"
+        ],
+        "operationId": "NewGameRequest",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/NewGameResponse"
+          },
+          "default": {
+            "$ref": "#/responses/NewGameResponse"
+          }
+        }
+      }
+    },
+    "/game/:gameId": {
+      "post": {
+        "description": "Picks and reveal a cell",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "minesweeper"
+        ],
+        "operationId": "PickCellRequest",
+        "parameters": [
+          {
+            "name": "Cell",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Cell"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "GameId",
+            "description": "The game id",
+            "name": "gameId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PickCellResponse"
+          },
+          "default": {
+            "$ref": "#/responses/PickCellResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Cell": {
+      "type": "object",
+      "required": [
+        "row",
+        "column"
+      ],
+      "properties": {
+        "column": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Column"
+        },
+        "row": {
+          "description": "The row of the cell",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Row"
+        }
+      },
+      "x-go-package": "github.com/mdstella/minesweeper/core/model"
+    }
+  },
+  "responses": {
+    "NewGameResponse": {
+      "description": "New game with a clean board to play and a gameId identifying that board",
+      "schema": {
+        "properties": {
+          "board": {
+            "type": "array",
+            "example": "[[1 2 1 0 0 0 0 0 0] [* 2 * 1 0 0 0 0 0] ...]",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "gameId": {
+            "type": "string",
+            "example": "12bnd1d01d"
+          }
+        }
+      }
+    },
+    "PickCellResponse": {
+      "description": "Picking/flaging a cell, the users receives the updated board and statuses flags",
+      "schema": {
+        "properties": {
+          "board": {
+            "type": "array",
+            "example": "[[1 2 1 0 0 0 0 0 0] [* 2 * 1 0 0 0 0 0] ...]",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "gameId": {
+            "type": "string",
+            "example": "12bnd1d01d"
+          },
+          "won": {
+            "type": "boolean",
+            "example": true
+          },
+          "endedGame": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      }
+    }
+  }
+}

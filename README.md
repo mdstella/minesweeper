@@ -194,3 +194,4 @@
 	- Added images for flags and mines.
 8. Modal game over notification added to let the user know if he/she won or lost (**COMMIT: 4e7a5f5e34a87f72371a25aa7cfa1f46e33621e0**).
 9. Adding test cases to BE (**COMMIT 6dae4935bff0f096f5acfaaf6a2857cd8832725b**). Added integration tests, invoking using the endpoint layer and going through the service. Added unit test cases on service layer (without mocking). Added unit tests cases on Endpoint layer (mocking the service layer)
+10. Adding swagger documentation for the API. It should be available in `/swagger-ui/swagger.json`

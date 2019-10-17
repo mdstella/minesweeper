@@ -1,3 +1,20 @@
+// Package classification Minesweeper API.
+//
+// the purpose of this application is to provide an application
+// that is using plain go code to define an API for Minesweeper game
+//
+//     Schemes: http, https
+//     Host: localhost
+//     BasePath: /v1
+//     Version: 0.0.1
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -18,6 +35,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+//go:generate swagger generate spec -o swagger-ui/swagger.json
 func main() {
 	logger := log.NewLogfmtLogger(os.Stderr)
 	port := os.Getenv("PORT")
@@ -39,15 +57,65 @@ func main() {
 	// into the model, and a common response encoder
 	newGameHandler := httptransport.NewServer(endpoint.MakeNewGameEndpoint(srv), decoder.DecodeNewGameRequest, EncodeResponse)
 	// Define the method, path and the handler in the router to be able to dispatch requests to it.
+
+	// swagger:route POST /game minesweeper NewGameRequest
+	//
+	// Generates a new Minesweeper game
+	//
+	//     Consumes:
+	//     - application/json
+	//
+	//     Produces:
+	//     - application/json
+	//
+	//     Schemes: http, https
+	//
+	//     Responses:
+	//       default: NewGameResponse
+	//       200: NewGameResponse
 	r.Methods("POST").Path("/minesweeper/v1/game").Handler(newGameHandler)
 
 	// Adding routing for picking a cell
+	// swagger:route POST /game/:gameId minesweeper PickCellRequest
+	//
+	// Picks and reveal a cell
+	//
+	//     Consumes:
+	//     - application/json
+	//
+	//     Produces:
+	//     - application/json
+	//
+	//     Schemes: http, https
+	//
+	//     Responses:
+	//       default: PickCellResponse
+	//       200: PickCellResponse
 	pickCellHandler := httptransport.NewServer(endpoint.MakePickCellEndpoint(srv), decoder.DecodePickCellRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/game/{gameId}").Handler(pickCellHandler)
 
 	// Adding routing for adding a flag
+	// swagger:route POST /flag/:gameId minesweeper AddFlagRequest
+	//
+	// Add a flag to a cell
+	//
+	//     Consumes:
+	//     - application/json
+	//
+	//     Produces:
+	//     - application/json
+	//
+	//     Schemes: http, https
+	//
+	//     Responses:
+	//       default: PickCellResponse
+	//       200: PickCellResponse
 	addFlagHandler := httptransport.NewServer(endpoint.MakeAddFlagEndpoint(srv), decoder.DecodeAddFlagRequest, EncodeResponse)
 	r.Methods("POST").Path("/minesweeper/v1/flag/{gameId}").Handler(addFlagHandler)
+
+	// adding swagger endpoint to have the API doc available
+	swaggerUrl := "/swagger-ui/"
+	r.PathPrefix(swaggerUrl).Handler(http.StripPrefix(swaggerUrl, http.FileServer(http.Dir("./swagger-ui/"))))
 
 	handler := cors.Default().Handler(r)
 
