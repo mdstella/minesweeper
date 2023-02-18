@@ -15,5 +15,5 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.2.2
-	golang.org/x/net v0.0.0-20191007182048-72f939374954
+	golang.org/x/net v0.7.0
 )
